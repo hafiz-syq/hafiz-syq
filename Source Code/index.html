@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTAL TEKNIK</title>
+    <!-- X-ICON / FAVICON -->
+    <link rel="shortcut icon" href="assets/unnamed_2.png" type="image/x-icon">
+
+    <style>
+        /* ================= VARIABEL & RESET ================= */
+        :root {
+            --bg-dark: #050505;
+            --text-main: #e0e0e0;
+            --red-tech: #b91c1c;
+            --red-hover: #dc2626;
+            --yellow-tech: #facc15;
+            --btn-gray: #151515;
+            --locked-gray: #111111;
+            --border-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            /* Memastikan tidak ada lengkungan di semua elemen */
+            border-radius: 0 !important;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ================= SPA CONTAINER LOGIC ================= */
+        .page {
+            display: none;
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ================= POPUP PERINGATAN KUSTOM (TOMBOL TERKUNCI) ================= */
+        #custom-alert {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000;
+            color: #fff;
+            border: 3px solid var(--red-tech);
+            border-left: 15px solid var(--yellow-tech);
+            padding: 15px 30px;
+            font-weight: bold;
+            font-family: 'Impact', sans-serif;
+            letter-spacing: 1px;
+            z-index: 9999;
+            transition: top 0.4s ease-in-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        #custom-alert.show {
+            top: 30px;
+        }
+
+        .header-menu {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 5px solid var(--red-tech);
+            padding-bottom: 20px;
+        }
+
+        .header-menu h1 {
+            color: var(--yellow-tech);
+            font-size: 3.5rem;
+            letter-spacing: 3px;
+            text-shadow: 3px 3px 0px #000, -2px -2px 0px var(--red-tech);
+            margin-bottom: 5px;
+            line-height: 1.1;
+        }
+
+        .header-menu p {
+            color: #888;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .menu-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--btn-gray);
+            border: 4px solid var(--border-color);
+            padding: 40px 20px;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: 0.2s all;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .menu-btn:not(.locked):hover {
+            background-color: var(--red-tech);
+            border-color: var(--yellow-tech);
+            color: #000;
+            transform: translateY(-5px);
+            box-shadow: 6px 6px 0px var(--yellow-tech);
+        }
+
+        .menu-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .menu-title {
+            font-family: 'Impact', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .menu-btn.locked {
+            background-color: var(--locked-gray);
+            border-color: #0a0a0a;
+            color: #444;
+            cursor: not-allowed;
+        }
+
+        .menu-btn.locked .menu-icon,
+        .menu-btn.locked .menu-title {
+            opacity: 0.3;
+            filter: grayscale(100%);
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: var(--yellow-tech);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-bottom: 3px solid var(--red-tech);
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            font-family: 'Impact', sans-serif;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            color: var(--red-tech);
+            border-bottom-color: var(--yellow-tech);
+        }
+
+        .section-header {
+            text-align: center;
+            margin: 0 0 35px;
+            padding-bottom: 15px;
+            border-bottom: 3px dashed var(--red-tech);
+            color: var(--red-tech);
+            font-size: 2.5rem;
+        }
+
+        .content-box {
+            background-color: var(--btn-gray);
+            border-left: 6px solid var(--red-tech);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-right: 2px solid var(--border-color);
+            border-top: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .content-box.yellow {
+            border-left-color: var(--yellow-tech);
+        }
+
+        .content-box h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        ul.list-style {
+            list-style-type: square;
+            padding-left: 20px;
+        }
+
+        ul.list-style li {
+            margin-bottom: 10px;
+        }
+
+        .text-red {
+            color: var(--red-tech);
+            font-weight: bold;
+        }
+
+        .text-yellow {
+            color: var(--yellow-tech);
+            font-weight: bold;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .img-banner {
+            width: 100%;
+            height: auto;
+            border: 4px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .slogan-container {
+            text-align: center;
+            background-color: #000;
+            border: 3px solid var(--red-tech);
+            padding: 40px;
+            margin-top: 60px;
+            width: 100%;
+        }
+
+        .slogan-container img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border: 2px solid #222;
+        }
+
+        .slogan-text {
+            color: var(--red-tech);
+            font-size: 2.2rem;
+            font-family: 'Impact', sans-serif;
+        }
+
+        .sumpah-text {
+            font-size: 1.3rem;
+            text-align: center;
+            font-weight: bold;
+            line-height: 2.2;
+            padding: 40px;
+            border: 3px solid var(--yellow-tech);
+            background-color: #000;
+        }
+
+        .lirik-box {
+            white-space: pre-line;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .organisasi-2-col {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .kaprodi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        /* Mengubah card menjadi clickable */
+        .card-pimpinan {
+            background-color: #000;
+            border: 3px solid #222;
+            text-align: center;
+            padding: 30px 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            /* Kursor menjadi telunjuk */
+        }
+
+        .card-pimpinan:hover {
+            border-color: var(--red-tech);
+            transform: translateY(-5px);
+            /* Efek melayang */
+            box-shadow: 0 5px 15px rgba(185, 28, 28, 0.2);
+        }
+
+        .card-pimpinan h3 {
+            color: var(--red-tech);
+            margin-bottom: 5px;
+            border: none;
+            padding: 0;
+        }
+
+        .card-pimpinan p.jabatan {
+            color: var(--yellow-tech);
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-family: 'Impact', sans-serif;
+            letter-spacing: 1.5px;
+        }
+
+        .foto-placeholder {
+            width: 140px;
+            height: 140px;
+            background-color: #111;
+            margin: 0 auto 20px;
+            border: 4px solid var(--red-tech);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+            font-weight: bold;
+            font-family: 'Impact', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .hirarki-section {
+            margin-top: 60px;
+            padding-top: 50px;
+            border-top: 4px solid var(--red-tech);
+        }
+
+        /* ================= MODAL DETAIL ORGANISASI ================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: var(--btn-gray);
+            border: 4px solid var(--red-tech);
+            border-left: 15px solid var(--yellow-tech);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease-in-out;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-overlay.show .modal-box {
+            transform: scale(1);
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--red-tech);
+            font-size: 2rem;
+            cursor: pointer;
+            font-family: 'Impact', sans-serif;
+            transition: color 0.3s;
+        }
+
+        .close-modal-btn:hover {
+            color: var(--yellow-tech);
+        }
+
+        .modal-foto {
+            width: 160px;
+            height: 160px;
+            background-color: #000;
+            border: 4px solid var(--red-tech);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-weight: bold;
+            font-family: 'Impact', sans-serif;
+        }
+
+        .modal-role {
+            color: var(--yellow-tech);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Impact', sans-serif;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .modal-name {
+            color: var(--text-main);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .modal-nip {
+            color: #888;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .modal-desc {
+            color: #ccc;
+            line-height: 1.6;
+            text-align: justify;
+            font-size: 1rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+
+            .menu-grid,
+            .grid-2,
+            .organisasi-2-col,
+            .kaprodi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-menu h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-header {
+                font-size: 2rem;
+            }
+
+            .slogan-text {
+                font-size: 1.5rem;
+            }
+
+            .modal-box {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Alert Kustom Halaman Terkunci -->
+    <div id="custom-alert">Pesan Peringatan</div>
+
+    <!-- MODAL DETAIL ORGANISASI (Struktur) -->
+    <div id="org-modal" class="modal-overlay" onclick="closeOrgModal(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="close-modal-btn" onclick="closeOrgModal(event)">X</button>
+            <div class="modal-foto" id="m-foto">FOTO</div>
+            <p class="modal-role" id="m-role">JABATAN</p>
+            <h3 class="modal-name" id="m-name">NAMA</h3>
+            <p class="modal-nip" id="m-nip">NIP/NIM</p>
+            <div class="modal-desc" id="m-desc">Deskripsi lengkap mengenai profil pimpinan akan muncul di sini.</div>
+        </div>
+    </div>
+
+    <!-- HALAMAN MENU -->
+    <div id="page-menu" class="page active">
+        <div class="header-menu">
+            <h1>PORTAL TEKNIK</h1>
+            <p>Sistem Informasi & Kaderisasi</p>
+        </div>
+
+        <div class="menu-grid">
+            <!-- SUMPAH (TERBUKA) -->
+            <div class="menu-btn" onclick="showPage('page-sumpah')">
+                <div class="menu-icon">✊</div>
+                <div class="menu-title">Sumpah Mahasiswa</div>
+            </div>
+
+            <!-- LIRIK (TERBUKA) -->
+            <div class="menu-btn" onclick="showPage('page-lirik')">
+                <div class="menu-icon">🎵</div>
+                <div class="menu-title">Lirik & Rap</div>
+            </div>
+
+            <!-- MATERI (TERKUNCI SEMENTARA) -->
+            <div id="btn-materi" class="menu-btn locked" onclick="handleLockedClick(event)">
+                <div class="menu-icon">🔒</div>
+                <div class="menu-title">Materi (Terkunci)</div>
+            </div>
+
+            <!-- PIMPINAN (TERKUNCI SEMENTARA) -->
+            <div id="btn-pimpinan" class="menu-btn locked" onclick="handleLockedClick(event)">
+                <div class="menu-icon">🔒</div>
+                <div class="menu-title">Struktur (Terkunci)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HALAMAN MATERI -->
+    <div id="page-materi" class="page">
+        <div class="btn-back" onclick="showPage('page-menu')">&larr; KEMBALI KE MENU</div>
+
+        <h2 class="section-header">MATERI KETEKNIKAN</h2>
+        <img src="assets/unnamed.jpg" alt="Tarantula Fakultas Teknik" class="img-banner">
+
+        <div class="content-box">
+            <h3>FILOSOFI TARANTULA (Maskot)</h3>
+            <ul class="list-style">
+                <li><strong>Bisa hidup dimana saja.</strong><br> > Yaitu cara kita bertahan hidup atau pergi kemana saja
+                    mau dalam keadaan apapun.</li>
+                <li><strong>Membuat jaring hanya satu arah yaitu arah selatan.</strong><br> > Yaitu kalau kita memulai
+                    sesuatu atau melakukan sesuatu harus optimis, dan mempersiapkan sesuatu harus satu tujuan.</li>
+                <li><strong>Walaupun berbadan kecil tidak takut kepada berbadan besar.</strong><br> > Yaitu bukan hanya
+                    untuk fisik tetapi kita bisa menang dari segi pemikiran atau kecerdasan.</li>
+            </ul>
+        </div>
+
+        <div class="grid-2">
+            <div class="content-box yellow">
+                <h3>TRIDARMA PERGURUAN TINGGI</h3>
+                <ul class="list-style">
+                    <li>Pendidikan</li>
+                    <li>Penelitian</li>
+                    <li>Pengabdian Masyarakat</li>
+                </ul>
+            </div>
+            <div class="content-box yellow">
+                <h3>TUJUAN PERKULIAHAN</h3>
+                <ul class="list-style">
+                    <li>Proses</li>
+                    <li>Perubahan</li>
+                    <li>Perkembangan</li>
+                    <li>Hasil</li>
+                </ul>
+            </div>
+            <div class="content-box">
+                <h3><span class="text-red">RUSAK</span></h3>
+                <ul class="list-style">
+                    <li><span class="text-red">Radikal</span> = Pasti</li>
+                    <li><span class="text-red">Universal</span> = Luas untuk pemahaman</li>
+                    <li><span class="text-red">Statistik</span> = Memiliki data</li>
+                    <li><span class="text-red">Analisa</span> = Mencari tahu dengan tegas</li>
+                    <li><span class="text-red">Kreatif</span> = Memiliki cara sendiri</li>
+                </ul>
+            </div>
+            <div class="content-box">
+                <h3><span class="text-red">SIKONTOL PANJANG</span></h3>
+                <ul class="list-style">
+                    <li><span class="text-red">SI</span>tuasi</li>
+                    <li><span class="text-red">KON</span>disi</li>
+                    <li><span class="text-red">TOL</span>eransi</li>
+                    <li><span class="text-red">PAN</span>dangan</li>
+                    <li><span class="text-red">JANG</span>kauan</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-box yellow">
+            <h3>LEMBAH HITAM KUNING</h3>
+            <p><strong>Lembah hitam kuning adalah rumah teknik.</strong></p>
+            <ul class="list-style">
+                <li><strong>Lembah:</strong> Wadah atau tempat menuntut ilmu.</li>
+                <li><strong>Hitam:</strong> Semakin dalam kita menuntut ilmu maka semakin dalam.</li>
+                <li><strong>Kuning:</strong> Berhati-hati dalam menuntut ilmu.</li>
+            </ul>
+        </div>
+
+        <div class="slogan-container">
+            <img src="assets/unnamed (1).jpg" alt="Slogan Tanah Teknik">
+            <div class="slogan-text">"TANAH TEKNIK TANAH BUNDA AKAN KU JAGA SAMPAI MATI"</div>
+        </div>
+    </div>
+
+    <!-- HALAMAN SUMPAH -->
+    <div id="page-sumpah" class="page">
+        <div class="btn-back" onclick="showPage('page-menu')">&larr; KEMBALI KE MENU</div>
+
+        <h2 class="section-header">SUMPAH MAHASISWA TEKNIK</h2>
+        <div class="sumpah-text">
+            <p class="text-red">KAMI MAHASISWA INDONESIA BERSUMPAH</p>
+            <p>BERTANAH AIR SATU, TANAH AIR TANPA PENINDASAN</p>
+            <br>
+            <p class="text-red">KAMI MAHASISWA INDONESIA BERSUMPAH</p>
+            <p>BERBANGSA SATU, BANGSA YANG GANDRUNG AKAN KEADILAN</p>
+            <br>
+            <p class="text-red">KAMI MAHASISWA INDONESIA BERSUMPAH</p>
+            <p>BERBAHASA SATU, BAHASA KEBENARAN</p>
+        </div>
+
+        <h2 style="padding-top: 30px;" class="section-header">SUMPAH SOLIDARITAS</h2>
+        <div class="sumpah-text">
+            <p>Kita adalah satu tidak ada perbedaan diantara kita <br>
+
+Kita tidak pernah mengenal kata lelah <br>
+
+Tunduk tertindas atau bangkit melawan <br>
+
+Karna mundur adalah sebuah penghianatan</p>
+        </div>
+
+        <div class="slogan-container">
+            <img src="assets/unnamed (1).jpg" alt="Slogan Tanah Teknik">
+            <div class="slogan-text">"TANAH TEKNIK TANAH BUNDA AKAN KU JAGA SAMPAI MATI"</div>
+        </div>
+    </div>
+
+    <!-- HALAMAN STRUKTUR ORGANISASI -->
+    <div id="page-struktur" class="page">
+        <div class="btn-back" onclick="showPage('page-menu')">&larr; KEMBALI KE MENU</div>
+
+        <h2 class="section-header">PIMPINAN FAKULTAS TEKNIK</h2>
+
+        <!-- DEKAN & WAKIL DEKAN -->
+        <div class="organisasi-2-col">
+            <!-- Data Attribute (data-*) ditambahkan untuk dikirim ke Modal JS saat diklik -->
+            <div class="card-pimpinan" onclick="openOrgModal(this)" data-role="Dekan Fakultas Teknik"
+                data-name="Assoc. Prof. Dr. Cut Rahmawati, S.T., M.T., IPM"
+                data-desc="Beliau adalah pemimpin tertinggi di Fakultas Teknik yang bertanggung jawab penuh terhadap jalannya aktivitas Tridarma Perguruan Tinggi, membawahi seluruh program studi dan memastikan kualitas pendidikan yang progresif dan radikal."
+                data-foto="FOTO DEKAN">
+                <div class="foto-placeholder">FOTO DEKAN</div>
+                <p class="jabatan">Dekan Fakultas Teknik</p>
+                <h3>Assoc. Prof. Dr. Cut Rahmawati, S.T., M.T., IPM</h3>
+                <p>NIP: 1234567890</p>
+            </div>
+
+            <div class="card-pimpinan" onclick="openOrgModal(this)" data-role="Wakil Dekan Fakultas Teknik"
+                data-name="Lindawati, S.Si., M.Eng"
+                data-desc="Wakil Dekan bertugas mendampingi Dekan dalam mengurus operasional harian, urusan kemahasiswaan, serta pengembangan kurikulum yang relevan dengan perkembangan industri modern."
+                data-foto="FOTO WADEK">
+                <div class="foto-placeholder">FOTO WAKIL DEKAN</div>
+                <p class="jabatan">Wakil Dekan Fakultas Teknik</p>
+                <h3>Lindawati, S.Si., M.Eng</h3>
+                <p>NIP: 0987654321</p>
+            </div>
+        </div>
+
+        <!-- 3 KAPRODI -->
+        <div class="kaprodi-grid">
+            <div class="card-pimpinan" onclick="openOrgModal(this)" data-role="Kaprodi Teknik Sipil"
+                data-name="Muhammad Zardi, S.T., M.T."
+                data-desc="Bertanggung jawab memimpin Program Studi Teknik Sipil, merancang konstruksi akademik terbaik untuk melahirkan insinyur sipil yang tangguh, inovatif, dan berintegritas."
+                data-foto="KAPRODI SIPIL">
+                <div class="foto-placeholder">FOTO KAPRODI</div>
+                <p class="jabatan">Kaprodi Teknik Sipil</p>
+                <h3>Muhammad Zardi, S.T., M.T.</h3>
+            </div>
+
+            <div class="card-pimpinan" onclick="openOrgModal(this)" data-role="Kaprodi Teknik Mesin"
+                data-name="Dr. Iqbal, S.T., M.T."
+                data-desc="Mengarahkan jurusan Teknik Mesin untuk menjadi pusat inovasi teknologi manufaktur dan konversi energi demi memajukan sektor industri nasional."
+                data-foto="KAPRODI MESIN">
+                <div class="foto-placeholder">FOTO KAPRODI</div>
+                <p class="jabatan">Kaprodi Teknik Mesin</p>
+                <h3>Dr. Iqbal, S.T., M.T.</h3>
+            </div>
+
+            <div class="card-pimpinan" onclick="openOrgModal(this)" data-role="Kaprodi Sistem Informasi"
+                data-name="Ryan Setiawan, S.T., M.Kom."
+                data-desc="Kepala Program Studi Sistem Informasi bertugas mensinergikan teknologi komputer dengan manajemen bisnis guna menghasilkan analis sistem kelas dunia."
+                data-foto="KAPRODI SI">
+                <div class="foto-placeholder">FOTO KAPRODI</div>
+                <p class="jabatan">Kaprodi Sistem Informasi</p>
+                <h3>Ryan Setiawan, S.T., M.Kom.</h3>
+            </div>
+        </div>
+
+        <!-- STRUKTUR MAHASISWA -->
+        <div class="hirarki-section">
+            <h2 class="section-header">STRUKTUR ORGANISASI MAHASISWA</h2>
+
+            <!-- DPM & BEM -->
+            <h3 style="text-align: center; color: var(--yellow-tech); margin-bottom: 25px;">Tingkat Fakultas</h3>
+            <div class="organisasi-2-col">
+                <div class="card-pimpinan" style="border-color: var(--yellow-tech);" onclick="openOrgModal(this)"
+                    data-role="KETUA DPM FT" data-name="Abangda Muhammad Raju Kurniawan" data-nip="NIM: 22146038"
+                    data-desc="Ketua Dewan Perwakilan Mahasiswa mengemban tugas legislatif mahasiswa, memastikan konstitusi himpunan dan aspirasi mahasiswa tersalurkan dengan baik dan demokratis."
+                    data-foto="FOTO DPM">
+                    <div class="foto-placeholder" style="border-color: var(--yellow-tech);">FOTO KETUA DPM</div>
+                    <p class="jabatan" style="color: var(--red-tech);">Ketua DPM FT</p>
+                    <h3 style="color: #fff;">Abangda Muhammad Raju Kurniawan</h3>
+                    <p>Dewan Perwakilan Mahasiswa</p>
+                </div>
+
+                <div class="card-pimpinan" style="border-color: var(--yellow-tech);" onclick="openOrgModal(this)"
+                    data-role="KETUA BEM FT" data-name="Abangda Teuku Riyan Afiffsyah" data-nip="NIM: 22141054"
+                    data-desc="Ketua BEM adalah eksekutor utama kegiatan kemahasiswaan tingkat fakultas. Membawa semangat perjuangan dan melatih kepemimpinan seluruh mahasiswa teknik."
+                    data-foto="FOTO BEM">
+                    <div class="foto-placeholder" style="border-color: var(--yellow-tech);">FOTO KETUA BEM</div>
+                    <p class="jabatan" style="color: var(--red-tech);">Ketua BEM FT</p>
+                    <h3 style="color: #fff;">Abangda Teuku Riyan Afiffsyah</h3>
+                    <p>Badan Eksekutif Mahasiswa</p>
+                </div>
+            </div>
+
+            <!-- KAHIM -->
+            <h3 style="text-align: center; color: var(--yellow-tech); margin: 50px 0 25px;">Ketua Himpunan Mahasiswa
+                Jurusan</h3>
+            <div class="kaprodi-grid">
+                <div class="card-pimpinan" onclick="openOrgModal(this)"
+                    data-role="KETUA HIMATESYA (Himp. Mahasiswa Sipil)" data-name="Abangda Riandi"
+                    data-nip="NIM: 23141024"
+                    data-desc="Sebagai Ketua Himpunan Mahasiswa Sipil, ia bertugas menjaga solidaritas dan mengembangkan potensi teknis para mahasiswa sipil."
+                    data-foto="KAHIM SIPIL">
+                    <div class="foto-placeholder">FOTO KAHIM SIPIL</div>
+                    <p class="jabatan">Ketua HIMATESYA</p>
+                    <h3>Abangda Riandi</h3>
+                </div>
+
+                <div class="card-pimpinan" onclick="openOrgModal(this)" data-role="KETUA HMM (Himp. Mahasiswa Mesin)"
+                    data-name="NAMA KAHIM MESIN" data-nip="NIM: 23142074"
+                    data-desc="Pemimpin di Himpunan Mahasiswa Mesin. Bertugas menjaga solidaritas tinggi (Solidarity Forever) dan melatih keras ketahanan mental dan keilmuan mesin."
+                    data-foto="KAHIM MESIN">
+                    <div class="foto-placeholder">FOTO KAHIM MESIN</div>
+                    <p class="jabatan">Ketua HMM</p>
+                    <h3>Abangda Yus Safran</h3>
+                </div>
+
+                <div class="card-pimpinan" onclick="openOrgModal(this)"
+                    data-role="KETUA HIMASI (Himp. Mahasiswa Sistem Informasi)" data-name="Abangda Diswanda"
+                    data-nip="NIM: SI001"
+                    data-desc="Menakhodai Himpunan Mahasiswa Sistem Informasi untuk memajukan bakat-bakat digital serta mempersiapkan kader-kader yang melek teknologi terkini."
+                    data-foto="KAHIM Sistem Informasi">
+                    <div class="foto-placeholder">FOTO KAHIM SI</div>
+                    <p class="jabatan">Ketua HIMASI</p>
+                    <h3>Abangda Diswanda</h3>
+                </div>
+            </div>
+
+            <!-- WAKAHIM (Sipil & SI Only) -->
+            <h3 style="text-align: center; color: #777; margin: 30px 0 25px;">Wakil Ketua Himpunan</h3>
+            <div class="organisasi-2-col" style="justify-content: center;">
+                <div class="card-pimpinan" style="border-color: #333; background-color: #080808;"
+                    onclick="openOrgModal(this)" data-role="Wakil Bupati HMS" data-name="Abangda Mu'ammar Nabbhan"
+                    data-nip="NIM: 23141086"
+                    data-desc="Bertugas mendampingi Ketua HIMATESYA dalam mengkoordinasikan program kerja serta menjaga keseimbangan internal pengurus himpunan."
+                    data-foto="WAKAHIM SIPIL">
+                    <div class="foto-placeholder" style="border-color: #444;">FOTO WAKAHIM</div>
+                    <p class="jabatan" style="color: #888;">Wakil Ketua HIMATESYA</p>
+                    <h3 style="color: #bbb;">Abangda Mu'ammar Nabbhan</h3>
+                </div>
+
+                <div class="card-pimpinan" style="border-color: #333; background-color: #080808;"
+                    onclick="openOrgModal(this)" data-role="Wakil Ketua HIMASI" data-name="Abangda Mukhsin"
+                    data-nip="NIM: SI002"
+                    data-desc="Menjadi tangan kanan Ketua HIMASI dalam mengelola dinamika internal dan memantau kemajuan proyek serta riset teknologi mahasiswa SI."
+                    data-foto="WAKAHIM SI">
+                    <div class="foto-placeholder" style="border-color: #444;">FOTO WAKAHIM</div>
+                    <p class="jabatan" style="color: #888;">Wakil Ketua HIMASI</p>
+                    <h3 style="color: #bbb;">Abangda Mukhsin</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="slogan-container">
+            <img src="assets/unnamed (1).jpg" alt="Slogan Tanah Teknik">
+            <div class="slogan-text">"TANAH TEKNIK TANAH BUNDA AKAN KU JAGA SAMPAI MATI"</div>
+        </div>
+    </div>
+
+    <!-- HALAMAN LIRIK -->
+    <div id="page-lirik" class="page">
+        <div class="btn-back" onclick="showPage('page-menu')">&larr; KEMBALI KE MENU</div>
+
+        <h2 class="section-header">LIRIK HYMNE DAN RAP</h2>
+        <div class="grid-2">
+            <div class="content-box lirik-box">
+                <h3 class="text-yellow">HYMNE TEKNIK</h3>
+                <p>
+                    Sebagai Bakti Padamu
+
+                    Tanah Air Indonesia
+
+                    Akal Budi Kan Kukembangkan Didalam Jiwa
+
+                    Panji Persatuan Fakultas Teknik Nan Jaya
+
+
+
+                    Syukur Padamu Tuhan
+
+                    Anugerah Telah Engkau Berikan
+
+                    Sebagai Mahasiswa Teknik
+
+                    Pengembang Mulia Cita-Cita Bangsa Fakultas Teknik Nan Jaya
+
+
+
+                    Sebagai Bakti Padamu
+
+                    Tanah Air Indonesia
+
+                    Akal Budi Kan Kukembangkan Didalam Jiwa
+
+                    Panji Persatuan Fakultas Teknik Nan Jaya
+
+
+
+                    Syukur Padamu Tuhan
+
+                    Anugerah Telah Engkau Berikan
+
+                    Sebagai Mahasiswa Teknik
+
+                    Pengembang Mulia Cita-Cita Bangsa Fakultas Teknik Nan Jaya
+
+
+                    Pengembang Mulia Cita-Cita Bangsa Fakultas Teknik Nan Jaya
+                </p>
+                <p><a href="https://www.youtube.com/watch?v=QzAgOa0JrOs&list=RDQzAgOa0JrOs&start_radio=1">Link Hymne Teknik</a></p>
+            </div>
+            <div class="content-box lirik-box">
+                <h3 class="text-red">RAP TEKNIK</h3>
+                <p>
+                    AKU INI ANAK TEKNIK
+
+                    MAHASISWA YANG ENERGIK
+
+                    KENG-KRENG ITU SARAPANKU
+
+                    MAKANAN PALING BERMUTU
+
+
+                    AKU BANGGA JADI ANAK TEKNIK
+
+                    KARENA AKU YANG TERBAIK
+
+                    GAYAKU, CARAKU, TINGKAHKU
+
+                    SELALU JADI PERHATIAN
+
+
+                    AKU SUKA SENIOR
+
+                    SENIOR SUKA AKU
+
+                    ITU NAMANYA DIBOLAK-BALIK
+                </p>
+                <p><a href="https://youtu.be/XPuxDdRtp7g?si=zRX93U7mzwQ8U82E">Link Rapp Teknik</a></p>
+            </div>
+        </div>
+
+        <div class="slogan-container">
+            <img src="assets/unnamed (1).jpg" alt="Slogan Tanah Teknik">
+            <div class="slogan-text">"TANAH TEKNIK TANAH BUNDA AKAN KU JAGA SAMPAI MATI"</div>
+        </div>
+    </div>
+
+    <script>
+        /* ===================================================
+           1. LOGIKA WAKTU (PENGUNCI HALAMAN)
+        =================================================== */
+        // TANGGAL BUKA KUNCI (Format: YYYY-MM-DDTHH:mm:ss)
+        const unlockDateString = "2026-09-30T18:00:00";
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const unlockDate = new Date(unlockDateString).getTime();
+            const now = new Date().getTime();
+
+            // Cek apakah waktu saat ini sudah melewati waktu unlock
+            if (now >= unlockDate) {
+                // BUKA KUNCI TOMBOL MATERI
+                const btnMateri = document.getElementById("btn-materi");
+                btnMateri.classList.remove("locked");
+                btnMateri.removeAttribute("onclick");
+                btnMateri.onclick = () => showPage('page-materi');
+                btnMateri.innerHTML = `
+                    <div class="menu-icon">⚙️</div>
+                    <div class="menu-title">Materi Keteknikan</div>
+                `;
+
+                // BUKA KUNCI TOMBOL STRUKTUR
+                const btnPimpinan = document.getElementById("btn-pimpinan");
+                btnPimpinan.classList.remove("locked");
+                btnPimpinan.removeAttribute("onclick");
+                btnPimpinan.onclick = () => showPage('page-struktur');
+                btnPimpinan.innerHTML = `
+                    <div class="menu-icon">👑</div>
+                    <div class="menu-title">Struktur Organisasi</div>
+                `;
+            }
+        });
+
+        /* ===================================================
+           2. LOGIKA NAVIGASI (SPA)
+        =================================================== */
+        function showPage(pageId) {
+            // Sembunyikan semua element dengan class 'page'
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Tampilkan halaman yang dituju
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        /* ===================================================
+           3. LOGIKA POPUP PERINGATAN (TOMBOL TERKUNCI)
+        =================================================== */
+        function handleLockedClick(event) {
+            event.preventDefault();
+            const targetDateObj = new Date(unlockDateString);
+            const dateStr = targetDateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            showCustomAlert("AKSES DITOLAK: KONTEN DIKUNCI HINGGA " + dateStr.toUpperCase());
+        }
+
+        function showCustomAlert(message) {
+            const alertBox = document.getElementById("custom-alert");
+            alertBox.innerText = message;
+            alertBox.classList.add("show");
+            setTimeout(() => { alertBox.classList.remove("show"); }, 3500);
+        }
+
+        /* ===================================================
+           4. LOGIKA MODAL POPUP (DETAIL ORGANISASI)
+        =================================================== */
+        function openOrgModal(element) {
+            // Mengambil data dari atribut 'data-*' pada elemen HTML
+            const role = element.getAttribute("data-role") || "JABATAN";
+            const name = element.getAttribute("data-name") || "NAMA";
+            const nip = element.getAttribute("data-nip") || "-";
+            const desc = element.getAttribute("data-desc") || "Deskripsi tidak tersedia.";
+            const foto = element.getAttribute("data-foto") || "FOTO";
+
+            // Memasukkan data ke dalam modal box
+            document.getElementById("m-role").innerText = role;
+            document.getElementById("m-name").innerText = name;
+            document.getElementById("m-nip").innerText = nip;
+            document.getElementById("m-desc").innerText = desc;
+            document.getElementById("m-foto").innerText = foto;
+
+            // Menampilkan modal dengan animasi fade in
+            const modal = document.getElementById("org-modal");
+            modal.classList.add("show");
+
+            // Mencegah body bisa di-scroll saat modal terbuka
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeOrgModal(event) {
+            // Memeriksa apakah event berasal dari klik 'X' atau background blur
+            if (event) {
+                event.stopPropagation(); // Mencegah klik menembus ke elemen di bawahnya
+            }
+            const modal = document.getElementById("org-modal");
+            modal.classList.remove("show");
+
+            // Mengembalikan body agar bisa di-scroll
+            document.body.style.overflow = "auto";
+        }
+    </script>
+</body>
+
+</html>
