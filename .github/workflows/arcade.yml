@@ -10,6 +10,11 @@ on:
     branches:
     - main
 
+# each run writes to the same pacman-output branch, so overlapping runs race
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   generate:
     permissions:
