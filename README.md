@@ -12,6 +12,7 @@
   <a href="https://hafizsyq.vercel.app">portfolio</a> ·
   <a href="mailto:hafizsyq@gmail.com">mail</a> ·
   <a href="https://wa.me/6283127596144">whatsapp</a> ·
+  <a href="https://open.spotify.com/user/31hubkehvnifdjppd3pcpwmslyli">spotify</a> ·
   <a href="https://github.com/hafiz-syq?tab=repositories">repos</a>
 </p>
 
@@ -119,7 +120,9 @@ Rebuilt on a schedule by GitHub Actions in this repository — never updated by 
 </p>
 
 <p align="center">
-  <img src="https://spotify-recently-played-readme.vercel.app/api?count=5" alt="Recently played tracks on Spotify" />
+  <a href="https://open.spotify.com/user/31hubkehvnifdjppd3pcpwmslyli">
+    <img src="https://spotify-recently-played-readme.vercel.app/api?count=5" alt="Recently played tracks on Spotify, opens the profile" />
+  </a>
 </p>
 
 </details>
